@@ -7,7 +7,7 @@ const version = '0.1'
  */
 function formatSize (filesize) {
   if (!filesize) {
-    return '0 Bytes'
+    return '0Bytes'
   }
   const unitArr = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   let index = 0
@@ -35,4 +35,4 @@ function centralEllipsis (text, opts) {
   return prefix + settings.ellipsis + suffix
 }
 
-export {version, formatSize, centralEllipsis}
+export { version, formatSize, centralEllipsis }

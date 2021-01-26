@@ -40,7 +40,6 @@ function createWindow () {
     minWidth: 700,
     minHeight: 500,
     webPreferences: {
-      nodeIntegrationInWorker: true,
       webSecurity: false,
       // experimentalFeatures: true, // 开启chrome试验功能
       nodeIntegration: true // 在网页中集成Node

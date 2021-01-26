@@ -10,6 +10,11 @@ export default new Router({
       name: 'Home',
       component: require('@/components/Home').default
     },
+    {
+      path: '/ChildProcess',
+      name: 'ChildProcess',
+      component: require('@/components/sys/ChildProcess').default
+    },
     // {
     //   path: '/excel/ExcelToJson',
     //   name: 'ExcelToJson',

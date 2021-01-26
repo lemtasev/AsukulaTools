@@ -2,7 +2,7 @@
   <div class="pic-to-pdf">
     <el-scrollbar :native="false" class="ctx">
       <div v-if="fileList.length < 1" class="no-data"><i class="el-icon-picture"></i><span>请添加图片</span></div>
-      <div v-for="(item, n) in fileList" class="pic-line" :class="{'dragging': dragging === item}"
+      <div v-for="(item, n) in fileList" :key="item.path + '-' + n" class="pic-line" :class="{'dragging': dragging === item}"
            draggable="true"
            @dragstart="handleDragStart($event, item)"
            @dragover.prevent="handleDragOver($event, item)"
@@ -76,6 +76,7 @@
         </div>
       </div>
       <div class="btn-line" style="justify-content: flex-end">
+        <span style="margin: 0 8px">共{{fileList.length}}张图，合计{{totalSize}}</span>
         <el-button type="primary" size="mini" icon="el-icon-plus" @click="addPic">添加图片</el-button>
         <el-button type="success" size="mini" icon="el-icon-download"
                    @click="toPdf"
@@ -83,6 +84,14 @@
                    :loading="toPdfLoading">
           转为PDF
         </el-button>
+      </div>
+      <div class="btn-line">
+        <el-progress style="width: 100%"
+          :text-inside="true" 
+          :stroke-width="20" 
+          :percentage="progressPercentage" 
+          :color="progressColors">
+        </el-progress>
       </div>
     </div>
   </div>
@@ -92,7 +101,6 @@
 import fs from 'fs'
 import _path from 'path'
 // import jsPDF from 'jspdf'
-import { Worker } from 'worker_threads'
 
 export default {
   name: 'PicToPdf',
@@ -120,10 +128,22 @@ export default {
       orientation: 'p',
       toPdfLoading: false,
 
-      userConfig: this.$store.getters['Config/getUserConfig']
+      userConfig: this.$store.getters['Config/getUserConfig'],
+      progressPercentage: 0,
+      progressColors: [
+        {color: 'rgb(221, 221, 221)', percentage: 0},
+        {color: 'rgb(65, 155, 255)', percentage: 99},
+        {color: 'rgb(100, 200, 60)', percentage: 100}
+      ]
     }
   },
-  watch: {},
+  computed: {
+    totalSize () {
+      return this.$utils.formatSize(this.fileList.reduce((pre, cur) => {
+        return pre + cur.size
+      }, 0))
+    }
+  },
   created () {
     console.log(`${this.$options.name} created`)
   },
@@ -173,32 +193,26 @@ export default {
         return
       }
       this.toPdfLoading = true
-      this.createPdf().then(filePath => {
+      this.progressPercentage = 0
+      const filename = `${this.$moment().format('YYYY-MM-DD-HH-mm-ss')}.pdf`
+      let data = {
+        filename: filename,
+        orientation: this.orientation,
+        pageSizeType: this.pageSizeType,
+        fileList: this.fileList,
+        pageSizeUnit: this.pageSizeUnit,
+        pageSizeWidth: this.pageSizeWidth,
+        pageSizeHeight: this.pageSizeHeight,
+        userConfig: this.userConfig
+      }
+      this.$process.create('create-pdf.js', data, res => {
+        console.log('now persents', res)
+        this.progressPercentage = Number.parseFloat((res.data * 100).toFixed(0))
+      }).then(filePath => {
         let autoOpenFolder = this.userConfig['PicToPdf.AutoOpenFolder']
         if (autoOpenFolder) this.$electron.shell.showItemInFolder(filePath)
       }).finally(() => {
         this.toPdfLoading = false
-      })
-    },
-    createPdf () {
-      return new Promise((resolve, reject) => {
-        console.log(this.fileList)
-        const filename = `${this.$moment().format('YYYY-MM-DD-HH-mm-ss')}.pdf`
-        let worker = new Worker('../../assets/worker/create-pdf.js', {
-          workerData: {
-            filename: filename,
-            orientation: this.orientation,
-            pageSizeType: this.pageSizeType,
-            fileList: this.fileList,
-            pageSizeUnit: this.pageSizeUnit,
-            pageSizeWidth: this.pageSizeWidth,
-            pageSizeHeight: this.pageSizeHeight,
-            userConfig: this.userConfig
-          }
-        })
-        worker.on('message', (filePath) => {
-          resolve(filePath)
-        })
       })
     },
     handleDragStart (e, item) {

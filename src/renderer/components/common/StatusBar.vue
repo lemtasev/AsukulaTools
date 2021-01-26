@@ -3,6 +3,7 @@
     <div class="left">left</div>
     <div class="center">center</div>
     <div class="right">
+      <button class="status-bar-btn" @click="logEvents">Events</button>
       <button class="status-bar-btn" @click="toggleDevTools">devTools</button>
     </div>
   </div>
@@ -22,6 +23,9 @@ export default {
     console.log(`${this.$options.name} mounted`)
   },
   methods: {
+    logEvents () {
+      console.log(this.$electron.ipcRenderer._events)
+    },
     toggleDevTools () {
       //  https://www.electronjs.org/docs/api/web-contents
       this.$electron.remote.getCurrentWebContents().toggleDevTools()
