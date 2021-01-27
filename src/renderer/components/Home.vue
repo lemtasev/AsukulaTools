@@ -32,6 +32,9 @@ export default {
   },
   watch: {
   },
+  beforeCreate () {
+    console.log(`${this.$options.name} beforeCreate`)
+  },
   created () {
     console.log(`${this.$options.name} created`)
   },

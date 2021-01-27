@@ -1,17 +1,14 @@
 ﻿<template>
   <div id="app">
-<!--    <Home></Home>-->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import './assets/iconfont/iconfont.css'
-// import Home from '@/components/Home'
 
 export default {
   name: 'Asukula'
-  // components: {Home}
 }
 </script>
 

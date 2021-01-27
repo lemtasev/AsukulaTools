@@ -2,7 +2,7 @@
   <div class="settings-container"
        v-loading="loading">
     <div class="settings-left">
-      <div v-for="(item, n) in sysSettings" @click="clickType(n)" class="settings-title"
+      <div v-for="(item, n) in sysSettings" :key="item.title" @click="clickType(n)" class="settings-title"
            :class="{'active': item.active}">
         {{ item.text }}
       </div>
@@ -11,9 +11,9 @@
       <el-scrollbar ref="elScroll" class="settings-detail">
 
         <el-form :model="userConfig" label-position="top" size="mini">
-          <div v-for="(item, n) in sysSettings" :ref="item.title" class="settings-block">
+          <div v-for="(item, n) in sysSettings" :key="item.title" :ref="item.title" class="settings-block">
             <div class="settings-block-title">{{ item.text }}</div>
-            <div v-for="(it, i) in item.settings" class="settings-block-line">
+            <div v-for="(it, i) in item.settings" :key="it.name" class="settings-block-line">
               <p style="font-weight: bold;">{{ it.name }}<i class="el-icon-document-copy copy-config" title="复制配置" @click="copyConfig(`${item.title}.${it.name}`)"></i></p>
 
               <el-form-item v-if="it.type === 'checkbox'">
@@ -53,7 +53,7 @@
             </div>
           </div>
           <el-form-item class="button-box">
-<!--            <el-button icon="el-icon-warning-outline" @click="clearUserConfig">清空配置</el-button>-->
+           <el-button icon="el-icon-warning-outline" @click="clearUserConfig">清空配置</el-button>
             <el-button icon="el-icon-printer" @click="printUserConfig">打印配置</el-button>
             <el-button @click="setDefault">恢复默认</el-button>
             <el-button type="success" icon="el-icon-check" @click="checkModify">应用更改</el-button>
@@ -251,6 +251,11 @@ export default {
       let cpv = `"${key}" = ${this.userConfig[key]}`
       console.log(cpv)
       this.$electron.clipboard.writeText(cpv)
+      this.$message({
+        showClose: true,
+        message: '已复制',
+        type: 'success' // success/warning/info/error
+      })
     },
     chooseFolder (formKey) {
       this.$electron.remote.dialog.showOpenDialog({
@@ -293,7 +298,18 @@ export default {
       console.log(this.userConfig)
     },
     clearUserConfig () {
-      this.$store.dispatchPromise('Config/do', {type: 'clearUserConfig'}).catch(err => console.error(err))
+      this.$electron.remote.dialog.showMessageBox(this.$electron.remote.getCurrentWindow(), {
+        type: 'question', // none/info/error/question/warning
+        message: '是否清空已储存的配置信息？',
+        detail: '此操作不可逆，请谨慎。',
+        buttons: ['取消', '确定']
+      }).then(res => {
+        console.log(res)
+        if (res.response === 1) {
+          this.$store.dispatchPromise('Config/do', {type: 'clearUserConfig'}).catch(err => console.error(err))
+          this.userConfig = {}
+        }
+      })
     }
   }
 }
@@ -342,6 +358,7 @@ export default {
         }
 
         .settings-block-line {
+          padding: 0 16px;
           .copy-config{
             margin: 0 8px;
             visibility: hidden;

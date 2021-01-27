@@ -1,5 +1,5 @@
 <template>
-  <div class="title-bar drag-win">
+  <div class="title-bar drag-win" :class="{'win-blur': !winFocus}">
     <div class="left drag-win">
       <div class="title-info drag-win" :style="{width: titleInfoWidth + 'px'}">{{
           this.$electron.remote.app.getName()
@@ -53,6 +53,7 @@ export default {
     return {
       titleInfoWidth: 200,
       isMaximized: false,
+      winFocus: false,
       tabbarList: this.$store.getters['Tab/get'],
       addNullTab: false // 是否显示增加空白面板按钮
     }
@@ -61,6 +62,17 @@ export default {
   created () {
     console.log(`${this.$options.name} created`)
     let win = this.$electron.remote.getCurrentWindow()
+    win.on('focus', () => {
+      this.winFocus = true
+    })
+    win.on('blur', () => {
+      this.winFocus = false
+    })
+    if (win.isFocused()) {
+      this.winFocus = true
+    } else {
+      this.winFocus = false
+    }
     win.on('maximize', () => {
       this.isMaximized = true
     })
@@ -110,12 +122,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.win-blur {
+  opacity: .7;
+}
 .title-bar {
   width: 100%;
-  height: 28px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: @titleBarBkgColor;
 
   .left {
     padding-left: 8px;
@@ -262,15 +278,16 @@ export default {
 
       i {
         font-size: 10px;
-        color: rgb(123, 123, 123);
+        color: rgb(63, 63, 63);
+        font-weight: bold;
       }
     }
 
     .title-bar-btn:hover {
-      background-color: rgba(211, 211, 211, 0.6);
+      background-color: rgba(0, 0, 0, 0.1);
 
       i {
-        color: rgb(77, 77, 77);
+        color: rgb(23, 23, 23);
       }
     }
 

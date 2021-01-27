@@ -37,7 +37,7 @@ export default {
 <style lang="less" scoped>
 .status-bar {
   width: 100%;
-  height: 22px;
+  height: 23px;
   //background-color: #ffffff;
   background-color: rgb(0,100,180);
   color: white;

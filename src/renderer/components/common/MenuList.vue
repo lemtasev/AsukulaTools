@@ -102,6 +102,7 @@ export default {
   display: flex;
   flex-direction: column;
   border-right: 1px solid @colorBorder;
+  background-color: @MenuListBkgColor;
 
   .search-box {
     padding: 0 8px;

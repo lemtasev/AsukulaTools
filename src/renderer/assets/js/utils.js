@@ -1,6 +1,15 @@
 const version = '0.1'
 
 /**
+ * 阻塞当前线程
+ * @param {*} time 毫秒
+ */
+function sleep (time) {
+  var startTime = new Date().getTime()
+  while (new Date().getTime() < startTime + parseInt(time, 10)) {}
+}
+
+/**
  * 格式化文件大小
  * @param filesize 文件的大小,传入的是一个bytes为单位的参数
  * @returns {string}
@@ -18,6 +27,11 @@ function formatSize (filesize) {
   return size + unitArr[index]
 }
 
+/**
+ * 省略文本中间部分
+ * @param {*} text 文本
+ * @param {*} opts 参数最大显示长度、省略符号
+ */
 function centralEllipsis (text, opts) {
   let settings = {
     maxLength: 14,
@@ -35,4 +49,4 @@ function centralEllipsis (text, opts) {
   return prefix + settings.ellipsis + suffix
 }
 
-export { version, formatSize, centralEllipsis }
+export { version, formatSize, centralEllipsis, sleep }
