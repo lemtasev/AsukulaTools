@@ -9,11 +9,13 @@
            @dragenter="handleDragEnter($event, item)"
            @dragend="handleDragEnd($event, item)"
       >
+        <div class="float-left">
+          <span>{{ $utils.formatSize(item.size) }}</span>
+        </div>
         <img class="img-preview" :src="'file:///' + item.path" :title="item.path"
              :style="{width: (5 + 75 * imgScale / 100) + '%'}"/>
         <div class="float-right">
           <el-button size="mini" icon="el-icon-close" circle @click="delPic(n)" title="删除"></el-button>
-          <span>{{ $utils.formatSize(item.size) }}</span>
         </div>
       </div>
     </el-scrollbar>
@@ -77,6 +79,7 @@
       </div>
       <div class="btn-line" style="justify-content: flex-end">
         <span style="margin: 0 8px">共{{fileList.length}}张图，合计{{totalSize}}</span>
+        <el-button size="mini" icon="el-icon-minus" @click="delAll" :disabled="fileList.length < 1">清空全部</el-button>
         <el-button type="primary" size="mini" icon="el-icon-plus" @click="addPic">添加图片</el-button>
         <el-button type="success" size="mini" icon="el-icon-download"
                    @click="toPdf"
@@ -179,6 +182,9 @@ export default {
     },
     delPic (n) {
       this.fileList.splice(n, 1)
+    },
+    delAll () {
+      this.fileList = []
     },
     orientationChange (e) {
       this.orientation = e === '纵向' ? 'p' : 'l'
@@ -284,17 +290,22 @@ export default {
         //max-height: 100px;
       }
 
-      .float-right {
+      .float-left, .float-right {
         padding: 0 8px;
         position: absolute;
         top: 0;
-        right: 0;
         width: auto;
         height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+      }
+      .float-left {
+        left: 0;
+      }
+      .float-right {
+        right: 0;
       }
     }
   }
