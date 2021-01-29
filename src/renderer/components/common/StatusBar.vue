@@ -1,10 +1,21 @@
 <template>
   <div class="status-bar drag-win">
-    <div class="left">left</div>
-    <div class="center">center</div>
+    <div class="left">
+      <button class="status-bar-btn left-item" @click="hideAside" 
+      :title="this.userConfig['General.ShowAside'] ? '隐藏边栏' : '显示边栏'">
+        <i class="el-icon-arrow-right rotate-anim" :class="{'active': this.userConfig['General.ShowAside']}"></i>
+      </button>
+    </div>
     <div class="right">
-      <button class="status-bar-btn" @click="logEvents">Events</button>
-      <button class="status-bar-btn" @click="toggleDevTools">devTools</button>
+      <el-popover style="height: 100%" placement="top">
+        <button slot="reference" class="status-bar-btn right-item">click 激活</button>
+        <div>
+          123
+        </div>
+      </el-popover>
+      <button class="status-bar-btn right-item" @click="clickEnv" title="打印环境参数">Env</button>
+      <button class="status-bar-btn right-item" @click="logEvents" title="打印当前监听事件列表">Events</button>
+      <button class="status-bar-btn right-item" @click="toggleDevTools" title="打开、关闭开发工具">devTools</button>
     </div>
   </div>
 </template>
@@ -13,7 +24,9 @@
 export default {
   name: 'StatusBar',
   data () {
-    return {}
+    return {
+      userConfig: this.$store.getters['Config/getUserConfig']
+    }
   },
   watch: {},
   created () {
@@ -23,6 +36,28 @@ export default {
     console.log(`${this.$options.name} mounted`)
   },
   methods: {
+    hideAside () {
+      if (this.userConfig['General.ShowAside']) {
+        this.$store.dispatchPromise('Config/do', {
+          type: 'update',
+          data: {
+            key: 'General.ShowAside',
+            value: false
+          }
+        })
+      } else {
+        this.$store.dispatchPromise('Config/do', {
+          type: 'update',
+          data: {
+            key: 'General.ShowAside',
+            value: true
+          }
+        })
+      }
+    },
+    clickEnv () {
+      console.log(process.versions)
+    },
     logEvents () {
       console.log(this.$electron.ipcRenderer._events)
     },
@@ -46,16 +81,21 @@ export default {
   justify-content: space-between;
 
   .left {
-    padding-left: 8px;
-  }
-
-  .center {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    .left-item {
+      margin-left: 8px;
+    }
   }
 
   .right {
     height: 100%;
     display: flex;
     align-items: center;
+    .right-item {
+      margin-right: 8px;
+    }
   }
 
   .status-bar-btn {

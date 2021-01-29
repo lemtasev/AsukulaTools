@@ -2,7 +2,7 @@
   <div class="settings-container"
        v-loading="loading">
     <div class="settings-left">
-      <div v-for="(item, n) in sysSettings" :key="item.title" @click="clickType(n)" class="settings-title"
+      <div v-for="(item, n) in settings" :key="item.title" @click="clickType(n)" class="settings-title"
            :class="{'active': item.active}">
         {{ item.text }}
       </div>
@@ -11,9 +11,9 @@
       <el-scrollbar ref="elScroll" class="settings-detail">
 
         <el-form :model="userConfig" label-position="top" size="mini">
-          <div v-for="(item, n) in sysSettings" :key="item.title" :ref="item.title" class="settings-block">
+          <div v-for="item in settings" :key="item.title" :ref="item.title" class="settings-block">
             <div class="settings-block-title">{{ item.text }}</div>
-            <div v-for="(it, i) in item.settings" :key="it.name" class="settings-block-line">
+            <div v-for="it in item.settings" :key="it.name" class="settings-block-line">
               <p style="font-weight: bold;">{{ it.name }}<i class="el-icon-document-copy copy-config" title="复制配置" @click="copyConfig(`${item.title}.${it.name}`)"></i></p>
 
               <el-form-item v-if="it.type === 'checkbox'">
@@ -66,164 +66,14 @@
 </template>
 
 <script>
-// import fs from 'fs'
-// import _path from 'path'
+import { sysSettings } from '@/assets/js/default-value'
 
 export default {
   name: 'Settings',
   data () {
     return {
       loading: false,
-      sysSettings: [
-        {
-          active: false,
-          title: 'General',
-          text: '通用设置',
-          settings: [
-            {
-              name: 'ShowAside',
-              text: '显示侧边栏',
-              type: 'checkbox',
-              defaultValue: true
-            },
-            {
-              name: 'AutomaticallyStartAtBoot',
-              text: '开机时自动启动',
-              type: 'checkbox',
-              defaultValue: true
-            },
-            {
-              name: 'TestInput',
-              text: '测试input',
-              type: 'input',
-              defaultValue: '测试input'
-            },
-            {
-              name: 'TestTextarea',
-              text: '测试textarea',
-              type: 'textarea',
-              defaultValue: '测试textarea'
-            },
-            {
-              name: 'TestSelect',
-              text: '测试select',
-              type: 'select',
-              defaultValue: 'bbb',
-              options: [
-                {
-                  text: '选项aaa',
-                  value: 'aaa'
-                },
-                {
-                  text: '选项bbb',
-                  value: 'bbb'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          active: false,
-          title: 'UserInterface',
-          text: '用户界面',
-          settings: [
-            {
-              name: 'TestCheckbox',
-              text: '测试checkbox',
-              type: 'checkbox',
-              defaultValue: true
-            },
-            {
-              name: 'TestInput',
-              text: '测试input',
-              type: 'input',
-              defaultValue: '测试input'
-            },
-            {
-              name: 'TestTextarea',
-              text: '测试textarea',
-              type: 'textarea',
-              defaultValue: '测试textarea'
-            },
-            {
-              name: 'TestSelect',
-              text: '测试select',
-              type: 'select',
-              defaultValue: 'bbb',
-              options: [
-                {
-                  text: '选项aaa',
-                  value: 'aaa'
-                },
-                {
-                  text: '选项bbb',
-                  value: 'bbb'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          active: false,
-          title: 'Keymap',
-          text: '快捷按键',
-          settings: [
-            {
-              name: 'TestCheckbox',
-              text: '测试checkbox',
-              type: 'checkbox',
-              defaultValue: true
-            },
-            {
-              name: 'TestInput',
-              text: '测试input',
-              type: 'input',
-              defaultValue: '测试input'
-            },
-            {
-              name: 'TestTextarea',
-              text: '测试textarea',
-              type: 'textarea',
-              defaultValue: '测试textarea'
-            },
-            {
-              name: 'TestSelect',
-              text: '测试select',
-              type: 'select',
-              defaultValue: 'bbb',
-              options: [
-                {
-                  text: '选项aaa',
-                  value: 'aaa'
-                },
-                {
-                  text: '选项bbb',
-                  value: 'bbb'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          active: false,
-          title: 'PicToPdf',
-          text: '图片转PDF',
-          settings: [
-            {
-              name: 'ExportPath',
-              text: '导出路径',
-              type: 'choose-folder',
-              defaultValue: this.$electron.remote.app.getPath('downloads')
-            },
-            {
-              name: 'AutoOpenFolder',
-              text: '导出完成后自动打开文件夹',
-              type: 'checkbox',
-              defaultValue: true
-            }
-          ]
-        }
-      ],
+      settings: sysSettings.get(),
       userConfig: {}
     }
   },
@@ -238,14 +88,14 @@ export default {
   methods: {
     clickType (n) {
       console.log(n)
-      this.sysSettings.forEach((it, i) => {
+      this.settings.forEach((it, i) => {
         if (n === i) {
           it.active = true
         } else {
           it.active = false
         }
       })
-      this.$refs['elScroll'].wrap.scrollTop = this.$refs[this.sysSettings[n].title][0].offsetTop
+      this.$refs['elScroll'].wrap.scrollTop = this.$refs[this.settings[n].title][0].offsetTop
     },
     copyConfig (key) {
       let cpv = `"${key}" = ${this.userConfig[key]}`
@@ -270,15 +120,7 @@ export default {
       })
     },
     setDefault () {
-      let def = {}
-      this.sysSettings.forEach(titleItem => {
-        titleItem.settings.forEach(nameItem => {
-          let key = `${titleItem.title}.${nameItem.name}`
-          let value = nameItem.defaultValue
-          def[key] = value
-        })
-      })
-      this.userConfig = def
+      this.userConfig = sysSettings.getDefaultConfig()
     },
     checkModify () {
       console.log('----------checkModify----------')

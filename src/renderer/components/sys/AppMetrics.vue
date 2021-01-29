@@ -5,7 +5,7 @@
         size="mini"
         :show-summary="true"
         :summary-method="getSummaries"
-        height="80%"
+        height="100%"
         :row-class-name="tableRowClassName"
         style="width: 100%">
 
@@ -92,7 +92,6 @@
       </el-table-column>
 
     </el-table>
-    <span>{{runtimeVersions}}</span>
   </div>
 </template>
 
@@ -103,8 +102,7 @@ export default {
     return {
       interval: null,
       lastNotificationTime: 0,
-      appMetrics: {},
-      runtimeVersions: {}
+      appMetrics: {}
     }
   },
   watch: {},
@@ -115,8 +113,6 @@ export default {
     this.interval = setInterval(() => {
       this.appMetrics = this.$electron.remote.app.getAppMetrics()
     }, 3000)
-
-    this.runtimeVersions = process.versions
   },
   mounted () {
     console.log(`${this.$options.name} mounted`)

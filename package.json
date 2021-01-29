@@ -60,6 +60,7 @@
     "electron-promise-ipc": "^2.2.4",
     "element-ui": "^2.14.1",
     "jspdf": "^2.2.0",
+    "merge": "^2.1.0",
     "moment": "^2.27.0",
     "vue": "^2.6.11",
     "vue-electron": "^1.0.6",

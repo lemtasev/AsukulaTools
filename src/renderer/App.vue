@@ -88,6 +88,14 @@ body {
   transform: rotate(180deg);
 }
 
+/*========== 通过active类控制旋转180度 ==========*/
+.rotate-anim{
+  transition: transform .3s;
+  &.active{
+    transform: rotate(180deg);
+  }
+}
+
 .rotate90 {
   transform: rotate(90deg);
 }
