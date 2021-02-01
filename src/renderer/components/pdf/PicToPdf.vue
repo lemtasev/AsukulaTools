@@ -288,6 +288,7 @@ export default {
 
       .img-preview {
         //max-height: 100px;
+        padding: 0;
       }
 
       .float-left, .float-right {
