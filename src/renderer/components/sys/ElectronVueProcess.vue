@@ -7,7 +7,7 @@
 <script>
 import { remote, ipcRenderer } from 'electron'
 export default {
-  name: 'ChildProcess',
+  name: 'ElectronVueProcess',
   created () {
     let winId = remote.getCurrentWindow().id
     ipcRenderer.on('start', (event, args) => {
@@ -22,25 +22,25 @@ export default {
       console.log('errorChannle', args.errorChannle)
       console.log('infoChannle', args.infoChannle)
       console.log('data', args.data)
-      import(`@/assets/child-process/${args.jsfilename}`).then(module => {
+      import(`@/assets/electron-vue-process/${args.jsfilename}`).then(module => {
         module.start(args.data, res => {
           // 向父窗口发送info事件
           parentWebContents.send(args.infoChannle, {
-            message: `ChildProcess【${winId}】info`,
+            message: `ElectronVueProcess【${winId}】info`,
             data: res
           })
         }).then(res => {
-          console.log('child-process finished')
+          console.log('ElectronVueProcess finished')
           // 通知父窗口成功
           parentWebContents.send(args.successChannle, {
-            message: `ChildProcess【${winId}】success`,
+            message: `ElectronVueProcess【${winId}】success`,
             data: res
           })
         }).catch(err => {
           console.error(err)
           // 通知父窗口错误
           parentWebContents.send(args.errorChannle, {
-            message: `ChildProcess【${winId}】error`,
+            message: `ElectronVueProcess【${winId}】error`,
             data: err
           })
         }).finally(() => {

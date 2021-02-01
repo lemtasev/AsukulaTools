@@ -7,10 +7,10 @@ function create (jsfilename, query, infoCallback) {
     let winURL = process.env.NODE_ENV === 'development'
       ? `http://localhost:9080`
       : `file://${__dirname}/index.html`
-    winURL += '#ChildProcess'
-    console.log('childProcess url:', winURL)
+    winURL += '#ElectronVueProcess'
+    console.log('ElectronVueProcess url:', winURL)
     let win = new remote.BrowserWindow({
-      title: 'childProcess',
+      title: 'ElectronVueProcess',
       show: false,
       webPreferences: {
         nodeIntegration: true

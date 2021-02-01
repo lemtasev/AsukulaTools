@@ -11,9 +11,9 @@ export default new Router({
       component: require('@/components/Home').default
     },
     {
-      path: '/ChildProcess',
-      name: 'ChildProcess',
-      component: require('@/components/sys/ChildProcess').default
+      path: '/ElectronVueProcess',
+      name: 'ElectronVueProcess',
+      component: require('@/components/sys/ElectronVueProcess').default
     },
     // {
     //   path: '/excel/ExcelToJson',
