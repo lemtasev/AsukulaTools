@@ -42,7 +42,9 @@ function createWindow () {
     webPreferences: {
       webSecurity: false,
       // experimentalFeatures: true, // 开启chrome试验功能
-      nodeIntegration: true // 在网页中集成Node
+      nodeIntegration: true, // 在网页中集成Node
+      nodeIntegrationInWorker: true,
+      enableRemoteModule: true
     }
   })
 
