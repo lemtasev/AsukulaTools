@@ -13,7 +13,8 @@ function create (jsfilename, query, infoCallback) {
       title: 'ElectronVueProcess',
       show: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        enableRemoteModule: true
       }
     })
     win.loadURL(winURL)

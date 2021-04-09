@@ -43,7 +43,7 @@ function createWindow () {
       webSecurity: false,
       // experimentalFeatures: true, // 开启chrome试验功能
       nodeIntegration: true, // 在网页中集成Node
-      nodeIntegrationInWorker: true,
+      // nodeIntegrationInWorker: true,
       enableRemoteModule: true
     }
   })
@@ -75,7 +75,8 @@ app.whenReady().then(() => {
     const url = req.url.substr(8)
     console.log(url)
     // callback(slash(decodeURI(url)))
-    callback(url)
+    // callback(url)
+    callback(decodeURI(url))
   }, (error) => {
     if (error) {
       console.error('Failed to register protocol')
