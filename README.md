@@ -1,3 +1,6 @@
+# 跑路
+得益于全世界良好的网络速度，此项目已于2021-04-09转移到码云，https://gitee.com/lemtasev/AsukulaTools.git
+
 # Asukula
 
 > An Asukula project
